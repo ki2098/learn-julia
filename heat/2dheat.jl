@@ -2,6 +2,7 @@ using Plots
 using SparseArrays
 using LinearAlgebra
 using IterativeSolvers
+using IncompleteLU
 
 L = 1
 N = 50
@@ -77,7 +78,9 @@ for i in gc + 1:sz[1] - gc
     A[idc, idn] = - 1
 end
 
-# T, ch = bicgstabl(A, b, max_mv_products=100000, log=true, verbose=true, abstol=1e-9, reltol=0)
-T = A\b
+Pl_ilu = ilu(A)
+
+T, ch = bicgstabl(A, b, Pl=Pl_ilu, log=true, verbose=true, abstol=1e-9, reltol=0)
+# T = A\b
 
 heatmap(x_coords, y_coords, transpose(T))
