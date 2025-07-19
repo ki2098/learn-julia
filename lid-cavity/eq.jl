@@ -62,15 +62,3 @@ function build_pressure_A(dx, sz, gc)
     return A
 end
 
-function solve_pressure_eq(A, b, sz)
-    b_reshaped = vec(b)
-    p = A\b_reshaped
-    return reshape(p, sz[1], sz[2])
-end
-
-function compute_residual(A, x, b, sz)
-    x_reshaped = vec(x)
-    b_reshaped = vec(b)
-    r = b_reshaped - A*x_reshaped
-    return reshape(r, sz[1], sz[2])
-end
