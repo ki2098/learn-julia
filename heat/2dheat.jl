@@ -5,18 +5,18 @@ using IterativeSolvers
 using IncompleteLU
 
 L = 1
-N = 50
+N = 100
 gc = 1
 sz = (N + 2*gc, N + 2*gc)
 dx = L/N
 
-x_coords = [dx*(i - gc - 0.5) for i in 1:sz[1]]
-y_coords = [dx*(j - gc - 0.5) for j in 1:sz[2]]
+x_coords = [dx*(i - gc - 0.5) for i in gc+1:sz[1]-gc]
+y_coords = [dx*(j - gc - 0.5) for j in gc+1:sz[2]-gc]
 
 cell_count = sz[1]*sz[2]
 
 A = spdiagm(0 => ones(cell_count))
-b = zeros(cell_count)
+b = zeros(sz)
 
 map_id = LinearIndices(sz)
 
@@ -44,10 +44,10 @@ for i in gc + 1:sz[1] - gc
     ids = map_id[i, j - 1]
     A[idc, idc] = 1
     A[idc, ids] = 1
-    b[idc] = 2*T_top
+    b[i, j] = 2*T_top
 end
 
-T_right = 20
+T_right = 0
 # right boundary, Tc = 2*T_right - Tw
 for j in gc + 1:sz[2] - gc
     i = sz[1] - gc + 1
@@ -55,10 +55,10 @@ for j in gc + 1:sz[2] - gc
     idw = map_id[i - 1, j]
     A[idc, idc] = 1
     A[idc, idw] = 1
-    b[idc] = 2*T_right
+    b[i, j] = 2*T_right
 end
 
-T_left = 20
+T_left = 0
 # left boundary, Tc = 2*T_left - Te
 for j in gc + 1:sz[2] - gc
     i = gc
@@ -66,7 +66,7 @@ for j in gc + 1:sz[2] - gc
     ide = map_id[i + 1, j]
     A[idc, idc] = 1
     A[idc, ide] = 1
-    b[idc] = 2*T_left
+    b[i, j] = 2*T_left
 end
 
 # bottom boundary, Tc = Tn
@@ -78,9 +78,9 @@ for i in gc + 1:sz[1] - gc
     A[idc, idn] = - 1
 end
 
-Pl_ilu = ilu(A)
+Pl = ilu(A)
 
-T, ch = bicgstabl(A, b, Pl=Pl_ilu, log=true, verbose=true, abstol=1e-9, reltol=0)
-# T = A\b
+T = zeros(sz)
+_, log = bicgstabl!(vec(T), A, vec(b), Pl=Pl, log=true)
 
-heatmap(x_coords, y_coords, transpose(T))
+heatmap(x_coords, y_coords, transpose(T[gc+1:end-gc,gc+1:end-gc]))
