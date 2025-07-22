@@ -1,11 +1,7 @@
 using LinearAlgebra
 
 function utopia_convection(fww, fw, fc, fe, fee, u, dx)
-    return 
-        (
-            u*(- fee + 8*fe - 8*fw + fww) 
-        +   abs(u)*(fee - 4*fe + 6*fc - 4*fw + fww)
-        )/(12*dx)
+    return (u*(- fee + 8*fe - 8*fw + fww) + abs(u)*(fee - 4*fe + 6*fc - 4*fw + fww))/(12*dx)
 end
 
 function cell_convection(u, v, f, dx, i, j)
@@ -18,9 +14,7 @@ function cell_convection(u, v, f, dx, i, j)
     fnn = f[i, j + 2]
     fs  = f[i, j - 1]
     fss = f[i, j - 2]
-    return
-        utopia_convection(fww, fw, fc, fe, fee, u, dx)
-    +   utopia_convection(fss, fs, fc, fn, fnn, v, dx)
+    return utopia_convection(fww, fw, fc, fe, fee, u, dx) + utopia_convection(fss, fs, fc, fn, fnn, v, dx)
 end
 
 function cell_diffusion(f, viscosity, dx, i, j)
@@ -40,11 +34,11 @@ function cell_pseudo_U(u, v, viscosity, dx, dt, i, j)
     return pseudo_u, pseudo_v
 end
 
-function field_pseudo_U!(u, v, ut, vt, viscosity, dx, dt, sz, gc)
+function field_pseudo_U!(uold, vold, u, v, viscosity, dx, dt, sz, gc)
     for i = gc + 1:sz[1] - gc, j = gc + 1:sz[2] - gc
-        pseudo_u, pseudo_v = cell_pseudo_U(u, v, viscosity, dx, dt, i, j)
-        ut[i, j] = pseudo_u
-        vt[i, j] = pseudo_v
+        ua, va = cell_pseudo_U(uold, vold, viscosity, dx, dt, i, j)
+        u[i, j] = ua
+        v[i, j] = va
     end
 end
 
@@ -81,7 +75,7 @@ end
 
 function field_div_U!(u, v, div_U, dx, sz, gc)
     for i = gc + 1:sz[1] - gc, j = gc + 1:sz[2] - gc
-        div_U = cell_div_U(u, v, dx, i, j)
+        div_U[i, j] = cell_div_U(u, v, dx, i, j)
     end
     mag_div_U = norm(div_U)
     inner_cell_count = (sz[1] - 2*gc)*(sz[2] - 2*gc)

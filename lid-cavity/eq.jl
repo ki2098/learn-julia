@@ -1,6 +1,8 @@
 using SparseArrays
-using IterativeSolvers
+import LinearSolve
 using LinearAlgebra
+
+linsolve = nothing
 
 function prepare_pressure_eq_A(dx, sz, gc)
     cell_count = sz[1]*sz[2]
@@ -66,7 +68,10 @@ function prepare_pressure_eq_A(dx, sz, gc)
     return A, max_diag
 end
 
-function solve_pressure_eq!(A, p, b; Pl=Identity())
-    _, log = bicgstabl!(vec(p), A, vec(b), Pl=Pl, log=true)
-    return log
+function init_linear_eq(dx, sz, gc)
+    A, max_diag = prepare_pressure_eq_A(dx, sz, gc)
+    b = zeros(sz)
+    prob = LinearSolve.LinearProblem(A, vec(b))
+    global linsolve = LinearSolve.init(prob)
+    return A, b, max_diag
 end

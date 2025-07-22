@@ -1,7 +1,7 @@
 using Plots
 using SparseArrays
 using LinearAlgebra
-using IterativeSolvers
+import LinearSolve as LS
 using IncompleteLU
 
 L = 1
@@ -78,9 +78,6 @@ for i in gc + 1:sz[1] - gc
     A[idc, idn] = - 1
 end
 
-Pl = ilu(A)
-
-T = zeros(sz)
-_, log = bicgstabl!(vec(T), A, vec(b), Pl=Pl, log=true)
+T = reshape(A\vec(b), size(b))
 
 heatmap(x_coords, y_coords, transpose(T[gc+1:end-gc,gc+1:end-gc]))
