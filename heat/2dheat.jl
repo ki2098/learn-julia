@@ -2,10 +2,9 @@ using Plots
 using SparseArrays
 using LinearAlgebra
 import LinearSolve as LS
-using IncompleteLU
 
 L = 1
-N = 100
+N = 200
 gc = 1
 sz = (N + 2*gc, N + 2*gc)
 dx = L/N
@@ -36,25 +35,25 @@ for i in gc + 1:sz[1] - gc, j in gc + 1:sz[2] - gc
     A[idc, ids] = As
 end
 
-T_top = 100
+T_top = 100.0
 # top boundary, Tc = 2*T_top - Ts
 for i in gc + 1:sz[1] - gc
     j = sz[2] - gc + 1
     idc = map_id[i, j]
     ids = map_id[i, j - 1]
-    A[idc, idc] = 1
-    A[idc, ids] = 1
+    A[idc, idc] = 1.0
+    A[idc, ids] = 1.0
     b[i, j] = 2*T_top
 end
 
-T_right = 0
+T_right = 0.0
 # right boundary, Tc = 2*T_right - Tw
 for j in gc + 1:sz[2] - gc
     i = sz[1] - gc + 1
     idc = map_id[i, j]
     idw = map_id[i - 1, j]
-    A[idc, idc] = 1
-    A[idc, idw] = 1
+    A[idc, idc] = 1.0
+    A[idc, idw] = 1.0
     b[i, j] = 2*T_right
 end
 
@@ -64,8 +63,8 @@ for j in gc + 1:sz[2] - gc
     i = gc
     idc = map_id[i, j]
     ide = map_id[i + 1, j]
-    A[idc, idc] = 1
-    A[idc, ide] = 1
+    A[idc, idc] = 1.0
+    A[idc, ide] = 1.0
     b[i, j] = 2*T_left
 end
 
@@ -74,10 +73,16 @@ for i in gc + 1:sz[1] - gc
     j = gc
     idc = map_id[i, j]
     idn = map_id[i, j + 1]
-    A[idc, idc] = 1
-    A[idc, idn] = - 1
+    A[idc, idc] = 1.0
+    A[idc, idn] = - 1.0
 end
 
-T = reshape(A\vec(b), size(b))
+println("A, b ready")
+flush(stdout)
+
+Pl = Diagonal(A)
+prob = LS.LinearProblem(A, vec(b))
+@time sol = LS.solve(prob, LS.KrylovJL_BICGSTAB(), verbose=true, abstol=1e-6*cell_count, Pl=Pl)
+T = reshape(sol.u, sz)
 
 heatmap(x_coords, y_coords, transpose(T[gc+1:end-gc,gc+1:end-gc]))
