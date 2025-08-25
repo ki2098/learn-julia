@@ -82,11 +82,29 @@ function gpu_solve_sor!(A, x, b, r, ω)
     it = 0
     while true
         
-        @cuda threads=nthreads blocks=nblocks gpu_colored_sor_sweep!(A, x, b, ω, 0)
+        @cuda(
+            threads=nthreads,
+            blocks=nblocks,
+            gpu_colored_sor_sweep!(
+                A, x, b,
+                ω, 0
+            )
+        )
 
-        @cuda threads=nthreads blocks=nblocks gpu_colored_sor_sweep!(A, x, b, ω, 1)
+        @cuda(
+            threads=nthreads,
+            blocks=nblocks,
+            gpu_colored_sor_sweep!(
+                A, x, b,
+                ω, 1
+            )
+        )
 
-        @cuda threads=nthreads blocks=nblocks gpu_res!(A, x, b, r)
+        @cuda(
+            threads=nthreads,
+            blocks=nblocks,
+            gpu_res!(A, x, b, r)
+        )
         
         err = norm(r)/sqrt(length(r))
 

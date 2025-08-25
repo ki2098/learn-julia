@@ -22,6 +22,10 @@ blocks=cld(N, threads)
 
 @btime begin
 CUDA.@sync begin
-    @cuda threads=threads blocks=blocks gpu_add2!(yd, xd)
+    @cuda(
+        threads=threads,
+        blocks=blocks,
+        gpu_add2!(yd, xd)
+    )
 end
 end
