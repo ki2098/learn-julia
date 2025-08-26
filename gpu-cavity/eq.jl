@@ -1,3 +1,4 @@
+using LinearAlgebra
 using CUDA
 
 function kernel_pressure_eq_A!(A, dx, dy, sz, gc)
@@ -63,6 +64,7 @@ function kernel_colored_sor_sweep!(A, x, b, ω, sz, gc, c)
             x[i, j] += ω*cell_residual(A, x, b, i, j)/A[i, j, 1]
         end
     end
+    return nothing
 end
 
 function kernel_residual!(A, x, b, r, sz, gc)
@@ -71,6 +73,7 @@ function kernel_residual!(A, x, b, r, sz, gc)
     if gc < i <= sz[1]-gc && gc < j <= sz[2]-gc
         r[i, j] = cell_residual(A, x, b, i, j)
     end
+    return nothing
 end
 
 function gpu_sor!(A, x, b, r, ω, sz, gc, max_err, max_it, nthread)
@@ -79,6 +82,7 @@ function gpu_sor!(A, x, b, r, ω, sz, gc, max_err, max_it, nthread)
         cld(sz[2], nthread[2])
     )
     it = 0
+    err = 0
     while true
         @cuda threads=nthread blocks=nblock kernel_colored_sor_sweep!(
             A, x, b, ω,
@@ -100,4 +104,5 @@ function gpu_sor!(A, x, b, r, ω, sz, gc, max_err, max_it, nthread)
             break
         end
     end
+    return it, err
 end

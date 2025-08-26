@@ -1,3 +1,4 @@
+using LinearAlgebra
 using CUDA
 
 function utopia_convection(fww, fw, fc, fe, fee, uW, uc, uE, dx)
@@ -43,10 +44,10 @@ function kernel_pseudo_U!(ut, vt, u, v, uu, vv, dx, dy, dt, μ, sz, gc)
         uW = uu[i - 1, j]
         vN = vv[i, j]
         vS = vv[i, j - 1]
-        u_conv = cell_convection(u, uW, uc, uE, vS, vc, vN, dx, dy, i, j)
-        u_diff = cell_diffusion(u, μ, dx, dy, i, j)
-        v_conv = cell_convection(v, uW, uc, uE, vS, vc, vN, dx, dy, i, j)
-        v_diff = cell_diffusion(v, μ, dx, dy, i, j)
+        u_conv = cell_convection(ut, uW, uc, uE, vS, vc, vN, dx, dy, i, j)
+        u_diff = cell_diffusion(ut, μ, dx, dy, i, j)
+        v_conv = cell_convection(vt, uW, uc, uE, vS, vc, vN, dx, dy, i, j)
+        v_diff = cell_diffusion(vt, μ, dx, dy, i, j)
         u[i, j] = uc + dt*(- u_conv + u_diff)
         v[i, j] = vc + dt*(- v_conv + v_diff)
     end

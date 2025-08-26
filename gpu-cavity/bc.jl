@@ -3,7 +3,7 @@ using CUDA
 function kernel_Ubc_xminus!(u, v, sz, gc)
     i = (blockIdx().x - 1)*blockDim().x + threadIdx().x
     j = (blockIdx().y - 1)*blockDim().y + threadIdx().y
-    if 1 < i <= gc && gc < j <= sz[2]-gc
+    if i <= gc && gc < j <= sz[2]-gc
         i_mirror = 2*gc + 1 - i
         u[i, j] = - u[i_mirror, j]
         v[i, j] = - v[i_mirror, j]
@@ -14,7 +14,7 @@ end
 function kernel_Ubc_xplus!(u, v, sz, gc)
     i = (blockIdx().x - 1)*blockDim().x + threadIdx().x
     j = (blockIdx().y - 1)*blockDim().y + threadIdx().y
-    if 1 < i <= gc && gc < j <= sz[2]-gc
+    if i <= gc && gc < j <= sz[2]-gc
         i += sz[1]-gc
         i_mirror = 2*(sz[1] - gc) + 1 - i
         u[i, j] = - u[i_mirror, j]
@@ -26,7 +26,7 @@ end
 function kernel_Ubc_yminus!(u, v, sz, gc)
     i = (blockIdx().x - 1)*blockDim().x + threadIdx().x
     j = (blockIdx().y - 1)*blockDim().y + threadIdx().y
-    if gc < i <= sz[1]-gc && 1 < j <= gc
+    if gc < i <= sz[1]-gc && j <= gc
         j_mirror = 2*gc + 1 - j
         u[i, j] = - u[i, j_mirror]
         v[i, j] = - v[i, j_mirror]
@@ -37,7 +37,7 @@ end
 function kernel_Ubc_yplus!(u, v, ulid, sz, gc)
     i = (blockIdx().x - 1)*blockDim().x + threadIdx().x
     j = (blockIdx().y - 1)*blockDim().y + threadIdx().y
-    if gc < i <= sz[1]-gc && 1 < j <= gc
+    if gc < i <= sz[1]-gc && j <= gc
         j += sz[2]-gc
         j_mirror = 2*(sz[2] - gc) + 1 - j
         u[i, j] = 2*ulid - u[i, j_mirror]
