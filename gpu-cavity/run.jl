@@ -14,7 +14,7 @@ dt = 1e-3
 
 sol = CuCavity.init(L, Division, uLid, Re, T, dt)
 
-outputInterval = Int(1/sol.dt)
+outputInterval = Int(0.5/sol.dt)
 
 for step = 1:sol.max_step
     lsIt, lsErr, divErr = CuCavity.time_integral!(sol)
