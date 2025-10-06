@@ -8,7 +8,7 @@ cd(@__DIR__)
 L = 1
 Division = 256
 uLid = 1
-Re = 10000
+Re = 100000
 T = 100
 dt = 1e-3
 
