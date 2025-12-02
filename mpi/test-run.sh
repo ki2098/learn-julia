@@ -1,0 +1,13 @@
+#!/usr/bin/bash
+
+#PJM -L rscgrp=b-batch
+#PJM -L gpu=4
+#PJM -L elapse=00:30:00
+#PJM -j
+#PJM -o test-run.log
+
+module load nvidia nvompi
+
+julia cuda-hpc-setup.jl 12.2
+
+mpiexec -n 8 julia --project foo.jl

@@ -6,9 +6,9 @@ using .CuCavity
 cd(@__DIR__)
 
 L = 1
-Division = 256
+Division = 100
 uLid = 1
-Re = 100000
+Re = 400
 T = 100
 dt = 1e-3
 
