@@ -11,4 +11,4 @@ module load nvidia nvompi julia
 
 julia cuda-hpc-setup.jl 12.2
 
-mpiexec -n 8 -map-by ppr:8:node julia --project foo.jl
+mpiexec -n 8 julia --project foo.jl
