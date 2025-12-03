@@ -7,7 +7,7 @@
 #PJM -j
 #PJM -o test-run.log
 
-module load cuda ompi julia
+module load gcc cuda ompi julia
 
 julia cuda-hpc-setup.jl 12.2
 
