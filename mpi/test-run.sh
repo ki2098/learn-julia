@@ -10,4 +10,4 @@ module load cuda julia
 
 julia --project -e 'using CUDA; CUDA.set_runtime_version!(v"12.2")'
 
-mpiexec -n 8 julia --project foo.jl
+~/.julia/bin/mpiexecjl -n 8 julia --project foo.jl
