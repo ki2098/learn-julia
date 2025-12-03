@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/sh
 
 #PJM -L rscgrp=b-batch
 #PJM -L node=1
@@ -7,7 +7,10 @@
 #PJM -j
 #PJM -o test-run.log
 
-module load gcc cuda ompi julia
+module load gcc
+module load ompi
+module load cuda
+module load julia
 
 julia cuda-hpc-setup.jl 12.2
 
