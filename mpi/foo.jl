@@ -15,7 +15,7 @@ CUDA.device!(gpu_id)
 
 gpu_id = CUDA.device(CUDA.current_context())
 
-println("$rank/$size -> $gpu_id")
+print("$rank/$size -> $gpu_id\n")
 
 MPI.Barrier(comm)
 
