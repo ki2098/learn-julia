@@ -11,6 +11,6 @@ module load nvidia nvompi julia
 
 julia cuda-hpc-setup.jl 12.2
 
-julia --project -e 'using MPIPreferences; MPIPreferences.use_jll_binary("OpenMPI_jll"); using Pkg; Pkg.instantiate()'
+# julia --project -e 'using MPIPreferences; MPIPreferences.use_jll_binary("OpenMPI_jll"); using Pkg; Pkg.instantiate()'
 
 mpiexec -n 8 julia --project foo.jl
