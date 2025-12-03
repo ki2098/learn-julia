@@ -7,7 +7,7 @@
 #PJM -j
 #PJM -o test-run.log
 
-module load nvidia nvompi
+module load nvidia nvompi julia
 
 julia cuda-hpc-setup.jl 12.2
 
